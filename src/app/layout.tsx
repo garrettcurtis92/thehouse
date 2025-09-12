@@ -10,6 +10,9 @@ const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit", display: 
 export const metadata: Metadata = {
   title: "The House",
   description: "College athletes meeting weekly to study the Bible in Redding.",
+  icons: {
+    icon: "/favicon.ico",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
