@@ -1,0 +1,10 @@
+/* stylelint-disable at-rule-no-unknown */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+/* stylelint-enable at-rule-no-unknown */
+
+@layer base {
+  html, body { height: 100%; }
+  body { background-color: theme('colors.sand'); color: theme('colors.charcoal'); }
+}
