@@ -48,7 +48,7 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-sand">
       {/* HERO */}
-      <section className="hero-noise relative min-h-[72vh] flex items-center justify-center overflow-hidden">
+      <section className="relative min-h-[72vh] flex items-center justify-center overflow-hidden">
         {/* BG image */}
         <Image
           src="/hero.jpg"
@@ -65,11 +65,11 @@ export default function Home() {
         <div className="relative z-10 w-full max-w-3xl px-6">
           <div className="bg-white/85 backdrop-blur rounded-2xl shadow-soft border border-white/40 p-8 text-center">
             <div className="flex items-center justify-center gap-3 mb-4">
-              <Image src="/theHouseLogo.png" alt="The House" width={56} height={56} className="rounded-full" />
+              <Image src="/the-house-mark.png" alt="The House" width={56} height={56} className="rounded-full" />
               <h1 className="font-display text-4xl sm:text-5xl text-deep tracking-wide">THE HOUSE</h1>
             </div>
             <p className="text-charcoal/90 text-lg sm:text-xl">
-              College athletes gathering weekly to study the Bible at The House in Redding.
+              College athletes gathering weekly to study the Bible at Mandi &amp; Jason Kelly’s home in Redding.
             </p>
 
             <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
