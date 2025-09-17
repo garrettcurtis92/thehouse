@@ -48,25 +48,19 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-sand">
       {/* HERO */}
-      <section className="hero-noise relative min-h-[72vh] flex items-center justify-center overflow-hidden bg-gray-400">
-        {/* BG image - temporarily using regular img for debugging */}
-        <img
-          src="/thehousehero2.png"
-          alt="The House Hero Background"
-          className="absolute inset-0 w-full h-full object-cover scale-105"
-          onError={(e) => {
-            console.error('Hero image failed to load:', e);
-          }}
-          onLoad={() => {
-            console.log('Hero image loaded successfully');
-          }}
+      <section className="hero-noise relative min-h-[72vh] flex items-start sm:items-center justify-center overflow-hidden bg-gray-400 pt-8 sm:pt-0">
+        {/* BG image as fixed background so content scrolls over it */}
+        <div
+          aria-hidden
+          className="absolute inset-0 bg-center bg-cover"
+          style={{ backgroundImage: "url('/thehousehero2.png')", backgroundAttachment: 'fixed' }}
         />
         {/* Overlay gradient - made lighter to see if image is loading */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/25 to-black/30" />
 
         {/* Hero content card */}
-        <div className="relative z-10 w-full max-w-3xl px-6">
-          <div className="bg-white/85 backdrop-blur rounded-2xl shadow-soft border border-white/40 p-8 text-center">
+  <div className="relative z-10 w-full max-w-2xl sm:max-w-3xl px-4 sm:px-6 translate-y-2 sm:translate-y-0">
+          <div className="bg-white/75 backdrop-blur rounded-2xl shadow-soft border border-white/35 p-6 sm:p-8 text-center">
             <div className="flex items-center justify-center gap-3 mb-4">
               <Image src="/theHouseLogo.png" alt="The House" width={56} height={56} className="rounded-full" />
               <h1 className="font-display text-4xl sm:text-5xl text-deep tracking-wide">THE HOUSE</h1>
