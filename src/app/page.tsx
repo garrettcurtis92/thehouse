@@ -47,19 +47,20 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-sand">
+      {/* Fixed full-viewport background so mobile behaves like desktop */}
+      <div
+        aria-hidden
+        className="fixed inset-0 -z-10 bg-center bg-cover"
+        style={{ backgroundImage: "url('/thehousehero2.png')" }}
+      />
+
       {/* HERO */}
       <section className="hero-noise relative min-h-[72vh] flex items-start sm:items-center justify-center overflow-hidden bg-gray-400 pt-8 sm:pt-0">
-        {/* BG image as fixed background so content scrolls over it */}
-        <div
-          aria-hidden
-          className="absolute inset-0 bg-center bg-cover"
-          style={{ backgroundImage: "url('/thehousehero2.png')", backgroundAttachment: 'fixed' }}
-        />
         {/* Overlay gradient - made lighter to see if image is loading */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/25 to-black/30" />
 
         {/* Hero content card */}
-  <div className="relative z-10 w-full max-w-2xl sm:max-w-3xl px-4 sm:px-6 translate-y-2 sm:translate-y-0">
+        <div className="relative z-10 w-full max-w-2xl sm:max-w-3xl px-4 sm:px-6 translate-y-2 sm:translate-y-0">
           <div className="bg-white/75 backdrop-blur rounded-2xl shadow-soft border border-white/35 p-6 sm:p-8 text-center">
             <div className="flex items-center justify-center gap-3 mb-4">
               <Image src="/theHouseLogo.png" alt="The House" width={56} height={56} className="rounded-full" />
