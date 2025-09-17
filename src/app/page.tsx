@@ -48,18 +48,21 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-sand">
       {/* HERO */}
-      <section className="hero-noise relative min-h-[72vh] flex items-center justify-center overflow-hidden">
-        {/* BG image */}
-        <Image
-          src="/hero.jpg"
-          alt=""
-          fill
-          priority
-          className="object-cover scale-105"
-          sizes="100vw"
+      <section className="hero-noise relative min-h-[72vh] flex items-center justify-center overflow-hidden bg-gray-400">
+        {/* BG image - temporarily using regular img for debugging */}
+        <img
+          src="/thehousehero2.png"
+          alt="The House Hero Background"
+          className="absolute inset-0 w-full h-full object-cover scale-105"
+          onError={(e) => {
+            console.error('Hero image failed to load:', e);
+          }}
+          onLoad={() => {
+            console.log('Hero image loaded successfully');
+          }}
         />
-        {/* Overlay gradient */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/35 via-black/40 to-black/55" />
+        {/* Overlay gradient - made lighter to see if image is loading */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/25 to-black/30" />
 
         {/* Hero content card */}
         <div className="relative z-10 w-full max-w-3xl px-6">
