@@ -46,22 +46,22 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen bg-sand">
-      {/* Fixed full-viewport background so mobile behaves like desktop */}
+  <main className="min-h-screen">
+      {/* Background with mobile parallax simulation. On desktop it stays fixed visually. */}
       <div
+        id="hero-bg"
         aria-hidden
-        className="fixed inset-0 -z-10 bg-center bg-cover"
+        className="fixed inset-0 -z-10 bg-[center_55%] bg-cover bg-no-repeat pointer-events-none will-change-transform"
         style={{ backgroundImage: "url('/thehousehero2.png')" }}
       />
 
-      {/* HERO */}
-      <section className="hero-noise relative min-h-[72vh] flex items-start sm:items-center justify-center overflow-hidden bg-gray-400 pt-8 sm:pt-0">
-        {/* Overlay gradient - made lighter to see if image is loading */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/25 to-black/30" />
+  {/* HERO */}
+  <section className="hero-noise relative min-h-screen flex items-start sm:items-center justify-center overflow-hidden pt-24 sm:pt-0">
+    {/* Removed dark gradient to let photo show through */}
 
         {/* Hero content card */}
         <div className="relative z-10 w-full max-w-2xl sm:max-w-3xl px-4 sm:px-6 translate-y-2 sm:translate-y-0">
-          <div className="bg-white/75 backdrop-blur rounded-2xl shadow-soft border border-white/35 p-6 sm:p-8 text-center">
+          <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-soft border border-white/30 p-6 sm:p-8 text-center">
             <div className="flex items-center justify-center gap-3 mb-4">
               <Image src="/theHouseLogo.png" alt="The House" width={56} height={56} className="rounded-full" />
               <h1 className="font-display text-4xl sm:text-5xl text-deep tracking-wide">THE HOUSE</h1>
@@ -92,8 +92,11 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Content Wrapper after hero with sand background and subtle top fade */}
+      <div className="relative bg-sand">
+        <div className="pointer-events-none absolute -top-24 left-0 right-0 h-24 bg-gradient-to-b from-transparent to-sand" />
       {/* SIGNUP CARD */}
-      <section id="signup" className="py-10 px-6">
+      <section id="signup" className="py-16 px-6">
         <div className="mx-auto w-full max-w-xl bg-white/90 backdrop-blur rounded-2xl shadow-soft p-8 border border-charcoal/10">
           <h2 className="font-display text-3xl text-deep text-center mb-2">Sign up</h2>
           <p className="text-center text-charcoal/80 mb-6">Get weekly invites & one-tap RSVPs.</p>
@@ -140,7 +143,39 @@ export default function Home() {
             </div>
           )}
         </div>
-      </section>
+  </section>
+  </div>
     </main>
   );
+}
+
+// Parallax effect: directly manipulate DOM after component definition to avoid re-rendering.
+// We place it here so it runs client-side only (file is already "use client").
+if (typeof window !== "undefined") {
+  // Singleton setup guard
+  if (!(window as any).__heroParallaxSetup) {
+    (window as any).__heroParallaxSetup = true;
+    const setup = () => {
+      if (window.innerWidth >= 640) return; // mobile only
+      const el = document.getElementById("hero-bg");
+      if (!el) return;
+      let ticking = false;
+  const maxShift = 260; // increased limit to reveal more of the photo
+      const onScroll = () => {
+        if (!ticking) {
+          requestAnimationFrame(() => {
+            const y = window.scrollY;
+            // Move image slightly slower (parallax). Negative to reveal lower portion gradually.
+            const translate = Math.max(-y * 0.35, -maxShift);
+            el.style.transform = `translateY(${translate}px)`;
+            ticking = false;
+          });
+          ticking = true;
+        }
+      };
+      window.addEventListener("scroll", onScroll, { passive: true });
+    };
+    if (document.readyState === "complete" || document.readyState === "interactive") setup();
+    else window.addEventListener("DOMContentLoaded", setup);
+  }
 }
