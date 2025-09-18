@@ -12,7 +12,7 @@ export default function DonatePage() {
         <h1 className="font-display text-4xl text-deep mb-2">Donate</h1>
         <p className="text-charcoal/90">
           Giving is processed securely by <b>Pathway Church</b>. On the next page, please choose
-          <b> “The House”</b> from the fund list so your gift is directed to our college athletes ministry.
+          <b> “TJK & Mandi Kelly (The House/Shasta College)”</b> from the fund list so your gift is directed to our college athletes ministry.
         </p>
 
         <a
