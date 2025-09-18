@@ -23,6 +23,7 @@ export default function Footer() {
         <div className="text-right text-xs text-charcoal/70">
           <p>© {year} The House · Redding, CA</p>
           <p>SMS consent honored. Reply <b>STOP</b> to opt out.</p>
+          <p className="mt-1 text-[10px] text-charcoal/50">Site by <a href="https://garrettcurtis.tech" className="hover:text-charcoal/70 underline-offset-2 hover:underline" target="_blank" rel="noopener noreferrer">Garrett Curtis</a></p>
         </div>
       </div>
     </footer>
