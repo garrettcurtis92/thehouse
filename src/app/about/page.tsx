@@ -48,10 +48,10 @@ export default function AboutPage() {
 
         {/* Story placeholder */}
         <section className="mt-8 bg-white/80 backdrop-blur rounded-2xl shadow-soft border border-charcoal/10 p-8">
-          <h3 className="font-display text-2xl text-deep mb-2">Mandi &amp; Jason’s story</h3>
+          <h3 className="font-display text-2xl text-deep mb-2">JK &amp; Mandi's story</h3>
           <p className="text-charcoal/90">
             (Coming soon) We’ll share how The House started and what God’s been doing. Check back for a short story
-            from Mandi &amp; Jason here.
+            from Mandi &amp; JK here.
           </p>
         </section>
       </div>
