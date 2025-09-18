@@ -1,8 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import FadeIn from "@/components/FadeIn";
-import { FormEvent, useState } from "react";
+import { FormEvent, useState, useRef, useEffect } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { normalizeUSPhone } from "@/lib/phone";
 
@@ -46,16 +45,43 @@ export default function Home() {
     el?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
+  const heroRef = useRef<HTMLElement | null>(null);
+
+  // Background-position parallax (lightweight) for the hero only
+  useEffect(() => {
+    const el = heroRef.current;
+    if (!el) return;
+    let ticking = false;
+    const basePercent = 55; // starting vertical center percentage
+    const maxShiftPx = 180; // limits movement
+    const speed = 0.25; // scroll multiplier
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        const y = window.scrollY;
+        const shift = Math.min(y * speed, maxShiftPx);
+        // Convert pixel shift to a calc relative to starting percent
+        el.style.backgroundPosition = `center calc(${basePercent}% + ${shift}px)`;
+        ticking = false;
+      });
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    // initial position
+    onScroll();
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   return (
   <main className="min-h-screen">
       {/* Hero background handled inside hero section now to avoid footer band */}
 
   {/* HERO */}
-  <section className="hero-noise relative min-h-screen flex items-start sm:items-center justify-center overflow-hidden pt-24 sm:pt-0 bg-no-repeat bg-cover bg-[center_55%]" style={{ backgroundImage: "url('/thehousehero2.png')" }}>
+  <section ref={heroRef as any} className="hero-noise relative min-h-screen flex items-start sm:items-center justify-center overflow-hidden pt-24 sm:pt-0 bg-no-repeat bg-cover" style={{ backgroundImage: "url('/thehousehero2.png')", backgroundPosition: "center 55%" }}>
     {/* Removed dark gradient to let photo show through */}
 
         {/* Hero content card */}
-        <FadeIn className="relative z-10 w-full max-w-2xl sm:max-w-3xl px-4 sm:px-6 translate-y-2 sm:translate-y-0" as="div">
+        <div className="relative z-10 w-full max-w-2xl sm:max-w-3xl px-4 sm:px-6 translate-y-2 sm:translate-y-0">
           <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-soft border border-white/30 p-6 sm:p-8 text-center">
             <div className="flex items-center justify-center gap-3 mb-4">
               <Image src="/theHouseLogo.png" alt="The House" width={56} height={56} className="rounded-full" />
@@ -84,7 +110,7 @@ export default function Home() {
               We’ll text about once a week. Reply <b>STOP</b> to opt out.
             </div>
           </div>
-        </FadeIn>
+        </div>
       </section>
 
       {/* Content Wrapper after hero with sand background and subtle top fade */}
@@ -92,8 +118,7 @@ export default function Home() {
         <div className="pointer-events-none absolute -top-24 left-0 right-0 h-24 bg-gradient-to-b from-transparent to-sand" />
       {/* SIGNUP CARD */}
       <section id="signup" className="py-16 px-6">
-  <FadeIn className="mx-auto w-full max-w-xl" as="div" y={24}>
-  <div className="bg-white/90 backdrop-blur rounded-2xl shadow-soft p-8 border border-charcoal/10">
+        <div className="mx-auto w-full max-w-xl bg-white/90 backdrop-blur rounded-2xl shadow-soft p-8 border border-charcoal/10">
           <h2 className="font-display text-3xl text-deep text-center mb-2">Sign up</h2>
           <p className="text-center text-charcoal/80 mb-6">Get weekly invites & one-tap RSVPs.</p>
 
@@ -138,8 +163,7 @@ export default function Home() {
               {status.msg}
             </div>
           )}
-  </div>
-  </FadeIn>
+        </div>
   </section>
   </div>
     </main>
