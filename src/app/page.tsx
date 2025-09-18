@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import FadeIn from "@/components/FadeIn";
 import { FormEvent, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { normalizeUSPhone } from "@/lib/phone";
@@ -54,7 +55,7 @@ export default function Home() {
     {/* Removed dark gradient to let photo show through */}
 
         {/* Hero content card */}
-        <div className="relative z-10 w-full max-w-2xl sm:max-w-3xl px-4 sm:px-6 translate-y-2 sm:translate-y-0">
+        <FadeIn className="relative z-10 w-full max-w-2xl sm:max-w-3xl px-4 sm:px-6 translate-y-2 sm:translate-y-0" as="div">
           <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-soft border border-white/30 p-6 sm:p-8 text-center">
             <div className="flex items-center justify-center gap-3 mb-4">
               <Image src="/theHouseLogo.png" alt="The House" width={56} height={56} className="rounded-full" />
@@ -83,7 +84,7 @@ export default function Home() {
               We’ll text about once a week. Reply <b>STOP</b> to opt out.
             </div>
           </div>
-        </div>
+        </FadeIn>
       </section>
 
       {/* Content Wrapper after hero with sand background and subtle top fade */}
@@ -91,7 +92,8 @@ export default function Home() {
         <div className="pointer-events-none absolute -top-24 left-0 right-0 h-24 bg-gradient-to-b from-transparent to-sand" />
       {/* SIGNUP CARD */}
       <section id="signup" className="py-16 px-6">
-        <div className="mx-auto w-full max-w-xl bg-white/90 backdrop-blur rounded-2xl shadow-soft p-8 border border-charcoal/10">
+  <FadeIn className="mx-auto w-full max-w-xl" as="div" y={24}>
+  <div className="bg-white/90 backdrop-blur rounded-2xl shadow-soft p-8 border border-charcoal/10">
           <h2 className="font-display text-3xl text-deep text-center mb-2">Sign up</h2>
           <p className="text-center text-charcoal/80 mb-6">Get weekly invites & one-tap RSVPs.</p>
 
@@ -136,7 +138,8 @@ export default function Home() {
               {status.msg}
             </div>
           )}
-        </div>
+  </div>
+  </FadeIn>
   </section>
   </div>
     </main>

@@ -1,4 +1,5 @@
 import Image from "next/image";
+import FadeIn from "@/components/FadeIn";
 
 export const metadata = {
   title: "About • The House",
@@ -8,9 +9,9 @@ export const metadata = {
 export default function AboutPage() {
   return (
     <main className="min-h-screen p-6 bg-sand">
-      <div className="mx-auto w-full max-w-5xl">
+      <div className="mx-auto w-full max-w-5xl space-y-8">
         {/* Hero intro */}
-        <section className="bg-white/80 backdrop-blur rounded-2xl shadow-soft border border-charcoal/10 overflow-hidden">
+        <FadeIn as="section" className="bg-white/80 backdrop-blur rounded-2xl shadow-soft border border-charcoal/10 overflow-hidden" y={28}>
           <div className="grid md:grid-cols-2">
             <div className="relative h-56 md:h-full">
               <Image
@@ -44,16 +45,16 @@ export default function AboutPage() {
               </div>
             </div>
           </div>
-        </section>
+        </FadeIn>
 
         {/* Story placeholder */}
-        <section className="mt-8 bg-white/80 backdrop-blur rounded-2xl shadow-soft border border-charcoal/10 p-8">
+        <FadeIn as="section" className="bg-white/80 backdrop-blur rounded-2xl shadow-soft border border-charcoal/10 p-8" delay={120} y={28}>
           <h3 className="font-display text-2xl text-deep mb-2">JK &amp; Mandi's story</h3>
           <p className="text-charcoal/90">
             (Coming soon) We’ll share how The House started and what God’s been doing. Check back for a short story
             from Mandi &amp; JK here.
           </p>
-        </section>
+        </FadeIn>
       </div>
     </main>
   );

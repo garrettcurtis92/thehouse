@@ -1,4 +1,5 @@
 const donateUrl = process.env.NEXT_PUBLIC_DONATE_URL || "#";
+import FadeIn from "@/components/FadeIn";
 
 export const metadata = {
   title: "Donate • The House",
@@ -8,7 +9,8 @@ export const metadata = {
 export default function DonatePage() {
   return (
     <main className="min-h-screen grid place-items-center p-6 bg-sand">
-      <div className="w-full max-w-2xl bg-white/90 backdrop-blur rounded-2xl shadow-soft p-8 border border-charcoal/10 text-center">
+      <FadeIn className="w-full max-w-2xl" as="div" y={24}>
+      <div className="bg-white/90 backdrop-blur rounded-2xl shadow-soft p-8 border border-charcoal/10 text-center">
         <h1 className="font-display text-4xl text-deep mb-2">Donate</h1>
         <p className="text-charcoal/90">
           Giving is processed securely by <b>Pathway Church</b>. On the next page, please choose
@@ -37,6 +39,7 @@ export default function DonatePage() {
           Questions? Reach out to Mandi &amp; Jason at our weekly gathering. Thank you for supporting student-athletes!
         </p>
       </div>
+      </FadeIn>
     </main>
   );
 }
