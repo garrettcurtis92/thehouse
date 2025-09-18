@@ -14,7 +14,7 @@ export default function AboutPage() {
           <div className="grid md:grid-cols-2">
             <div className="relative h-56 md:h-full">
               <Image
-  src="/about.jpg"
+  src="/Mandi-Jason.jpg"
   alt="Mandi & Jason Kelly"
   fill
   className="object-cover object-top"   // or object-center / object-bottom
