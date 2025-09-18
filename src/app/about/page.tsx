@@ -23,7 +23,7 @@ export default function AboutPage() {
             <div className="p-8">
               <h1 className="font-display text-4xl text-deep mb-3">About The House</h1>
               <p className="text-charcoal/90">
-                We’re a weekly Bible study for college athletes hosted by <b>Mandi &amp; JK</b> in Redding.
+                We’re a weekly Bible study for college athletes hosted by <b>JK &amp; Mandi</b> in Redding.
                 We keep it simple: Scripture, community, and real conversation around the table.
               </p>
 
