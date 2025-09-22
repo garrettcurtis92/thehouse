@@ -2,7 +2,7 @@
 
 import { createClient } from "@supabase/supabase-js";
 import { cookies } from "next/headers";
-import { sendSms } from "@/server/twilio"; // from Step 5
+import { sendSmsUniversal as sendSms } from "@/server/sms"; // from Step 5
 import crypto from "node:crypto";
 
 function adminClient() {
