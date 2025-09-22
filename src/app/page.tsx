@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { FormEvent, useState, useRef, useEffect } from "react";
+import { FormEvent, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { normalizeUSPhone } from "@/lib/phone";
 
@@ -45,39 +45,12 @@ export default function Home() {
     el?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
-  const heroRef = useRef<HTMLElement | null>(null);
-
-  // Background-position parallax (lightweight) for the hero only
-  useEffect(() => {
-    const el = heroRef.current;
-    if (!el) return;
-    let ticking = false;
-    const basePercent = 55; // starting vertical center percentage
-    const maxShiftPx = 180; // limits movement
-    const speed = 0.25; // scroll multiplier
-    const onScroll = () => {
-      if (ticking) return;
-      ticking = true;
-      requestAnimationFrame(() => {
-        const y = window.scrollY;
-        const shift = Math.min(y * speed, maxShiftPx);
-        // Convert pixel shift to a calc relative to starting percent
-        el.style.backgroundPosition = `center calc(${basePercent}% + ${shift}px)`;
-        ticking = false;
-      });
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    // initial position
-    onScroll();
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
   return (
   <main className="min-h-screen">
       {/* Hero background handled inside hero section now to avoid footer band */}
 
   {/* HERO */}
-  <section ref={heroRef as any} className="hero-noise relative min-h-screen flex items-start sm:items-center justify-center overflow-hidden pt-24 sm:pt-0 bg-no-repeat bg-cover" style={{ backgroundImage: "url('/thehousehero2.png')", backgroundPosition: "center 55%" }}>
+  <section className="hero-noise relative min-h-screen flex items-start sm:items-center justify-center overflow-hidden pt-24 sm:pt-0 bg-no-repeat bg-cover bg-[center_55%]" style={{ backgroundImage: "url('/thehousehero2.png')" }}>
     {/* Removed dark gradient to let photo show through */}
 
         {/* Hero content card */}

@@ -9,7 +9,7 @@ export async function POST(req: Request) {
   res.cookies.set("thehouse_admin", "1", {
     path: "/",
     httpOnly: true,
-    secure: true,
+    secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
     maxAge: 60 * 60 * 8, // 8h
   });
