@@ -15,6 +15,23 @@ function siteUrl() {
   return process.env.SITE_URL?.replace(/\/$/, "") || "http://localhost:3000";
 }
 
+// Debug helpers (no secrets in logs)
+const DEBUG = process.env.DEBUG_SMS === "true" || process.env.NODE_ENV !== "production";
+const dlog = (...args: any[]) => { if (DEBUG) console.log("[sms]", ...args); };
+const maskPhone = (p?: string | null) => (p ? String(p).replace(/\d(?=\d{4})/g, "•") : "");
+const normalizePhone = (p?: string | null) => {
+  if (!p) return "";
+  const s = String(p).replace(/[^\d+]/g, "");
+  if (/^\d{10}$/.test(s)) return `+1${s}`;
+  if (/^\+1\d{10}$/.test(s)) return s;
+  return s.startsWith("+") ? s : `+${s}`;
+};
+
+// Remove URLs from a message
+function stripUrls(input: string) {
+  return input.replace(/https?:\/\/\S+/gi, "").replace(/\s{2,}/g, " ").trim();
+}
+
 export async function createEventAction(formData: FormData) {
   // optional: simple gate check
   if (cookies().get("thehouse_admin")?.value !== "1") throw new Error("Unauthorized");
@@ -72,24 +89,59 @@ export async function previewInvitesAction(eventId: string) {
   return { sample: messages, count: messages.length };
 }
 
-export async function sendInvitesAction(eventId: string) {
+export async function sendInvitesAction(formData: FormData) {
   if (cookies().get("thehouse_admin")?.value !== "1") throw new Error("Unauthorized");
+
+  const eventId = String(formData.get("eventId") || "").trim();
+  if (!eventId) throw new Error("Missing eventId");
+
+  const sendToMeOnly = formData.get("sendToMeOnly") === "on";
+  const me = normalizePhone(process.env.ADMIN_TEST_NUMBER || "+12089270022");
+  const provider = process.env.USE_TEXTBELT === "true" ? "textbelt" : "twilio";
+  const allowSend = process.env.SEND_SMS === "true";
+  dlog("start", { sendToMeOnly, me: maskPhone(me), allowSend, provider });
 
   const sb = adminClient();
   const { data: subs, error } = await sb
     .from("subscribers")
     .select("id,name,phone")
     .eq("is_active", true)
-    .eq("sms_consent", true);
+    .eq("sms_consent", true)
+    .not("phone", "is", null);
   if (error) throw error;
+
+  const base = (subs ?? []).map((s) => ({ ...s, phone: normalizePhone(s.phone as any) }));
+  let audience = sendToMeOnly ? base.filter((s) => s.phone === me) : base;
+  if (sendToMeOnly && audience.length === 0 && me) {
+    dlog("no matching subscriber for ADMIN_TEST_NUMBER; falling back to direct");
+    audience = [{ id: -1, name: "Admin", phone: me } as any];
+  }
+  dlog("audience", { eligible: base.length, target: audience.length, sample: audience.slice(0, 3).map((s) => maskPhone(s.phone)) });
 
   const yesUrl = (t: string) => `${siteUrl()}/rsvp?t=${t}&s=yes`;
   const noUrl  = (t: string) => `${siteUrl()}/rsvp?t=${t}&s=no`;
   const maybeUrl = (t: string) => `${siteUrl()}/rsvp?t=${t}&s=maybe`;
 
+  if (!allowSend) {
+    dlog("SEND_SMS=false; dry-run. Would send to:", audience.map((s) => maskPhone(s.phone)));
+    return { ok: true, sent: 0, audience: audience.length, dryRun: true };
+  }
+
   let sent = 0;
-  for (const s of subs ?? []) {
-    // upsert RSVP row
+  for (const s of audience) {
+    // If this is the testing fallback (no subscriber row), skip RSVP DB writes and send a simple test message
+    if ((s as any).id === -1) {
+      const bodyTest = `Hey! The House is this Friday at 7:30 — are you coming? Reply YES or NO. Reply STOP to opt out.`;
+      try {
+        await sendSms(s.phone!, bodyTest);
+        sent++;
+        dlog("sent-test", { to: maskPhone(s.phone) });
+      } catch (e: any) {
+        dlog("send error (test)", { to: maskPhone(s.phone), error: e?.message });
+      }
+      continue;
+    }
+
     const { data: rsvpRow, error: rerr } = await sb
       .from("rsvps")
       .upsert(
@@ -98,28 +150,43 @@ export async function sendInvitesAction(eventId: string) {
       )
       .select("id")
       .single();
-    if (rerr) continue;
+    if (rerr) {
+      dlog("rsvp upsert error", { to: maskPhone(s.phone), error: String(rerr?.message || rerr) });
+      continue;
+    }
 
-    // mint fresh token
     const token = crypto.randomBytes(12).toString("hex");
-    await sb.from("rsvp_tokens").insert({ rsvp_id: rsvpRow!.id, token, expires_at: new Date(Date.now() + 14*24*3600*1000).toISOString() });
+    try {
+      await sb
+        .from("rsvp_tokens")
+        .insert({ rsvp_id: rsvpRow!.id, token, expires_at: new Date(Date.now() + 14*24*3600*1000).toISOString() });
+    } catch (tokErr: any) {
+      dlog("token insert error", { to: maskPhone(s.phone), error: String(tokErr?.message || tokErr) });
+      continue;
+    }
 
     const first = (s.name || "friend").split(" ")[0];
-    const body =
+    const bodyWithLinks =
       `Hey ${first}! The House this week — RSVP:\n` +
       `Yes: ${yesUrl(token)}\n` +
       `No: ${noUrl(token)}\n` +
       `Maybe: ${maybeUrl(token)}\n` +
       `Reply STOP to opt out.`;
 
-    if (process.env.SEND_SMS === "true") {
-      try {
-        await sendSms(s.phone!, body);
-        sent++;
-      } catch (e) {
-        console.error("SMS fail", s.phone, e);
-      }
+    const providerIsTextbelt = provider === "textbelt";
+    const allowLinks = providerIsTextbelt ? process.env.SMS_ALLOW_LINKS === "true" : true;
+    const body = allowLinks
+      ? bodyWithLinks
+      : `Hey ${first}! The House this week — are you coming? Reply YES, NO, or MAYBE. Reply STOP to opt out.`;
+
+    try {
+      await sendSms(s.phone!, body);
+      sent++;
+      dlog("sent", { to: maskPhone(s.phone) });
+    } catch (e: any) {
+      dlog("send error", { to: maskPhone(s.phone), error: e?.message });
     }
   }
-  return { ok: true, sent };
+  dlog("done", { sent, provider });
+  return { ok: true, sent, audience: sendToMeOnly ? "me" : "all", provider };
 }
